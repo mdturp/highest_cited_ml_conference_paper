@@ -2,33 +2,36 @@
 <html>
 
 <head>
-    <script src='sql-wasm.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm.js"
+        integrity="sha512-14M7CqWNUr6fzrgs9ncNWKdBtLu69HwEWq7J3/dPMUL+za3fBRLJvK6egAu4SSlxCM1apqsbVJHArGLl5fjldw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+
         config = {
-            locateFile: filename => `${filename}`
+            locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/${file}`
         }
         // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
         // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
-        initSqlJs(config).then(function (SQL) {
-            //Create the database
-            const db = new SQL.Database();
-            // Run a query without reading the results
-            db.run("CREATE TABLE test (col1, col2);");
-            // Insert two rows: (1,111) and (2,222)
-            db.run("INSERT INTO test VALUES (?,?), (?,?)", [1, 111, 2, 222]);
+        const sqlPromise = initSqlJs(config)
+        const dataPromise = fetch("/path/to/database.sqlite").then(res => res.arrayBuffer());
+        const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
+        const db = new SQL.Database(new Uint8Array(buf));
 
-            // Prepare a statement
-            const stmt = db.prepare("SELECT * FROM test WHERE col1 BETWEEN $start AND $end");
-            stmt.getAsObject({ $start: 1, $end: 1 }); // {col1:1, col2:111}
+        // Prepare a statement
+        const stmt = db.prepare("SELECT * FROM papers");
+        stmt.getAsObject({ $start: 1, $end: 1 }); // {col1:1, col2:111}
 
-            // Bind new values
-            stmt.bind({ $start: 1, $end: 2 });
-            while (stmt.step()) { //
-                const row = stmt.getAsObject();
-                console.log('Here is a row: ' + JSON.stringify(row));
-            }
-        });
+        // Bind new values
+        stmt.bind({ $start: 1, $end: 2 });
+        while (stmt.step()) { //
+            const row = stmt.getAsObject();
+            console.log('Here is a row: ' + JSON.stringify(row));
+        }
+
+
     </script>
+
+
 </head>
 
 <body>
