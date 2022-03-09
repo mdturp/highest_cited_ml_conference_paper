@@ -2,13 +2,16 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm.js"
         integrity="sha512-14M7CqWNUr6fzrgs9ncNWKdBtLu69HwEWq7J3/dPMUL+za3fBRLJvK6egAu4SSlxCM1apqsbVJHArGLl5fjldw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
     <script>
-        let sql_db_path = "https://crossorigin.me/https://github.com/mdturp/highest_cited_ml_conference_paper/blob/main/filename.sqlite?raw=true"
+        let sql_db_path = "https://storage.googleapis.com/highest-cited-ml-conference-paper-bucket/filename.sqlite"
         async function start() {
-            console.log("Het")
             config = {
                 locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/${file}`
             }
@@ -16,29 +19,35 @@
             // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
             const sqlPromise = initSqlJs(config)
             const dataPromise = await fetch(
-                sql_db_path, {
-                headers: {
-                    "Access-Control-Allow-Origin": "*"
-                },
-                method: 'GET'
-            }).then(res => res.arrayBuffer());
-            console.log(dataPromise)
-            //     const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
-            //     const db = new SQL.Database(new Uint8Array(buf));
+                sql_db_path).then(res => res.arrayBuffer());
 
-            //     // Prepare a statement
-            //     const stmt = db.prepare("SELECT * FROM papers");
-            //     stmt.getAsObject({ $start: 1, $end: 1 }); // {col1:1, col2:111}
+            const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
+            const db = new SQL.Database(new Uint8Array(buf));
+            
+            db.exec("ALTER TABLE papers ADD COLUMN citation INT")
+            db.exec("UPDATE papers SET citation = CAST(citations as INT)")
+            res = db.exec("SELECT * FROM papers ORDER BY citation DESC")[0]
 
-            //     // Bind new values
-            //     stmt.bind({ $start: 1, $end: 2 });
-            //     while (stmt.step()) { //
-            //         const row = stmt.getAsObject();
-            //         console.log('Here is a row: ' + JSON.stringify(row));
-                // }
-            }
+            var data = res.values.map((element) => { 
+                    var obj = {};
+                    for (let i=0; i<element.length; i++){
+                        obj[res.columns[i]] = element[i];
+                    }
+                    return obj})
+            
+                    var $table = $('#table')
+            $table.bootstrapTable({data: data})
+            console.log(data)
+            // // Populate Table.
+            
+            
+            // $(function() {
+            //     var data = data
+            //     $table.bootstrapTable({data: data})
+            // })
+        }
 
-            start()
+        start()
 
     </script>
 
@@ -47,11 +56,20 @@
 
 <body>
 
-    <div id="root">
+    <table id="table">
+        <thead>
+          <tr>
+            <th data-field="paperId">paperId</th>
+            <th data-field="title">Title</th>
+            <th data-field="citation">citation</th>
+          </tr>
+        </thead>
+      </table>
 
-    </div>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
 </body>
 
 </html>
