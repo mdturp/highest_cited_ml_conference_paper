@@ -2,73 +2,69 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+        integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/sql-wasm.js"
-        integrity="sha512-14M7CqWNUr6fzrgs9ncNWKdBtLu69HwEWq7J3/dPMUL+za3fBRLJvK6egAu4SSlxCM1apqsbVJHArGLl5fjldw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer">
-    </script>
-    <script>
-        let sql_db_path = "https://storage.googleapis.com/highest-cited-ml-conference-paper-bucket/filename.sqlite"
-        async function start() {
-            config = {
-                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.1/${file}`
-            }
-            // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
-            // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
-            const sqlPromise = initSqlJs(config)
-            const dataPromise = await fetch(
-                sql_db_path).then(res => res.arrayBuffer());
-
-            const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
-            const db = new SQL.Database(new Uint8Array(buf));
-            
-            db.exec("ALTER TABLE papers ADD COLUMN citation INT")
-            db.exec("UPDATE papers SET citation = CAST(citations as INT)")
-            res = db.exec("SELECT * FROM papers ORDER BY citation DESC")[0]
-
-            var data = res.values.map((element) => { 
-                    var obj = {};
-                    for (let i=0; i<element.length; i++){
-                        obj[res.columns[i]] = element[i];
-                    }
-                    return obj})
-            
-                    var $table = $('#table')
-            $table.bootstrapTable({data: data})
-            console.log(data)
-            // // Populate Table.
-            
-            
-            // $(function() {
-            //     var data = data
-            //     $table.bootstrapTable({data: data})
-            // })
-        }
-
-        start()
-
-    </script>
-
-
 </head>
 
 <body>
 
-    <table id="table">
-        <thead>
-          <tr>
-            <th data-field="paperId">paperId</th>
-            <th data-field="title">Title</th>
-            <th data-field="citation">citation</th>
-          </tr>
-        </thead>
-      </table>
+    <script>
+        const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/data.json"
+        const semantic_scholar_path = "https://www.semanticscholar.org/paper/"
+
+        async function populate() {
+            const data = await fetch(data_path).then(res => res.json());
+            $('#table_div').html(
+                `<div style="width: 100%; max-width: 700px;">
+                    <table id="table" class="table-striped">
+                        <thead>
+                            <tr>
+                                <th data-field="rank" data-width="5">Rank</th>
+                                <th data-field="title" data-width="100">Title</th>
+                                <th data-field="citations" data-width="10" data-sortable="true">Citations</th>
+                                <th data-field="year" data-width="10">Year</th>
+                                <th data-field="conference" data-width="20">Conference</th>
+                                <th data-field="paperID" data-width="10" data-formatter="LinkFormatter">Link</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>`
+            )
+
+            var $table = $('#table')
+            $table.bootstrapTable({
+                data: data,
+                search: true
+            })
+        }
+
+
+        function LinkFormatter(index, row) {
+            return `<a href="${semantic_scholar_path}${row.paperID}" target="_blank">Link</a>`
+        }
+
+
+        populate()
+    </script>
+
+    <div class="d-flex justify-content-center">
+        <div>
+            <h1>Highest cited ML conference paper</h1>
+        </div>
+    </div>
+
+    <div id="table_div" class="d-flex justify-content-center">
+
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
 </body>
 
