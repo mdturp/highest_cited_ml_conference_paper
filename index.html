@@ -12,11 +12,12 @@
 <body>
 
     <script>
-        const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/data.json"
+        const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/"
         const semantic_scholar_path = "https://www.semanticscholar.org/paper/"
 
-        async function populate() {
-            const data = await fetch(data_path).then(res => res.json());
+        async function populate(name = "data.json") {
+            const path = `${data_path}${name}`
+            const data = await fetch(path).then(res => res.json());
             $('#table_div').html(
                 `<div style="width: 100%; max-width: 700px;">
                     <table id="table" class="table-striped">
@@ -37,17 +38,32 @@
             var $table = $('#table')
             $table.bootstrapTable({
                 data: data,
-                search: true
+                search: true,
+                buttons: buttons,
+                pagination: true
             })
         }
 
+        function buttons() {
+            return {
+                btnUsersAdd: {
+                    text: 'Highlight Users',
+                    icon: 'fa-bars',
+                    event: function () {
+                        alert('Do some stuff to e.g. search all users which has logged in the last week')
+                    },
+                    attributes: {
+                        title: 'Search all users which has logged in the last week'
+                    }
+                }
+            }}
 
-        function LinkFormatter(index, row) {
-            return `<a href="${semantic_scholar_path}${row.paperID}" target="_blank">Link</a>`
-        }
+            function LinkFormatter(index, row) {
+                return `<a href="${semantic_scholar_path}${row.paperID}" target="_blank">Link</a>`
+            }
 
 
-        populate()
+            populate()
     </script>
 
     <div class="d-flex justify-content-center">
