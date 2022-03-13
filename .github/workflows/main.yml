@@ -24,6 +24,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false 
+          fetch-depth: 0
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
@@ -33,6 +36,18 @@ jobs:
       - name: Install requirements.txt
         run: pip install -r requirements.txt 
 
-      - name: Run script.
+      - name: Run script
         run: python update.py
+
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Updated data.json" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
 
