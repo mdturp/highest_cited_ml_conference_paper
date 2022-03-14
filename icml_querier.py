@@ -57,7 +57,8 @@ if __name__ == "__main__":
                     icml_data.append(data)
                     already_queried_titles.append(title)
                 except:
-                    icml_data = sorted(icml_data, key=lambda d: d['citations']) 
+                    icml_data = sorted(icml_data,
+                                       key=lambda d: -int(d['citations'])) 
                     with open("icml_data.json", "w") as f:
                         json.dump(icml_data, f)
                     print("I am sleeping ...")
