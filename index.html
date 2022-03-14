@@ -47,7 +47,7 @@
             $table.bootstrapTable({
                 data: data,
                 search: true,
-                searchAlign: "left",
+                searchAlign: "right",
                 pagination: true
             })
         }
@@ -57,6 +57,11 @@
             return `<a href="${semantic_scholar_path}${row.paperID}" target="_blank">Link</a>`
         }
 
+        $(document).ready(function () {
+            $('#neurips').change(function () {
+                populate("icml_data.json")
+            })
+        })
 
         $(document).ready(populate())
     </script>
@@ -73,9 +78,19 @@
                 from the ICML, Neurips & ICLR conferences based on their citation
                 count. The citation counts are updated automatically at the beginning
                 of every week.
-
             </p>
-
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="icml">
+                <label class="form-check-label" for="inlineCheckbox1">ICML</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="neurips" value="Neurips">
+                <label class="form-check-label" for="inlineCheckbox2">Neurips</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="iclr" disabled>
+                <label class="form-check-label" for="inlineCheckbox3">ICLR (disabled)</label>
+            </div>
         </div>
     </div>
 
