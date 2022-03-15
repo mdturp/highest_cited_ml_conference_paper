@@ -17,14 +17,68 @@
 </head>
 
 <body>
+    <div class="d-flex justify-content-center">
+        <div>
+            <h1>Highest cited ML conference paper</h1>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <div style="width: 100%; max-width: 900px;">
+            <p>This is a small little website that ranks machine learning papers
+                from the ICML, Neurips & ICLR conferences based on their citation
+                count. The citation counts are updated automatically at the beginning
+                of every week.
+            </p>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="icmlCheckbox" value="icml" autocomplete="off">
+                <label class="form-check-label" for="icmlCheckbox">ICML</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="neuripsCheckbox" value="neurips" checked autocomplete="off">
+                <label class="form-check-label" for="neuripsCheckbox">Neurips</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="iclrCheckbox" value="iclr" disabled autocomplete="off">
+                <label class="form-check-label" for="iclrCheckbox">ICLR (disabled)</label>
+            </div>
+        </div>
+    </div>
+
+    <div id="table_div" class="d-flex justify-content-center">
+
+    </div>
+
+    <div id="footer" class="my-auto d-flex justify-content-center">
+        <a style="color: #DCDCDC" href="https://github.com/mdturp" target="_blank"> Created by MDT</a>
+    </div>
 
     <script>
         const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/"
         const semantic_scholar_path = "https://www.semanticscholar.org/paper/"
 
-        async function populate(name = "data.json") {
-            const path = `${data_path}${name}`
-            const data = await fetch(path).then(res => res.json());
+        async function populate() {
+
+            let data = []
+            console.log($('#icmlCheckbox').is(":checked"))
+            console.log($('#neuripsCheckbox').is(":checked"))
+            if ($('#icmlCheckbox').is(":checked")) {
+                const icml_path = `${data_path}icml_data.json`
+                const icml_data = await fetch(icml_path).then(res => res.json());
+                data.push(...icml_data)
+            }
+            if ($('#neuripsCheckbox').is(":checked")) {
+                const neurips_path = `${data_path}data.json`
+                const neurips_data = await fetch(neurips_path).then(res => res.json());
+                data.push(...neurips_data)
+            }
+
+            data = data.sort(function(a, b){return b.citations - a.citations})
+            data = data.map(function (x, index) {
+                x["rank"] = index + 1
+                return x
+            }) 
+
             $('#table_div').html(
                 `<div style="width: 100%; max-width: 900px;">
                     <table id="table" class="table-striped">
@@ -58,55 +112,15 @@
         }
 
         $(document).ready(function () {
-            $('#icml').change(function () {
-                populate("icml_data.json")
+            $('#icmlCheckbox').change(function () {
+                populate()
+            })
+            $('#neuripsCheckbox').change(function () {
+                populate()
             })
         })
-
-        $(document).ready(function () {
-            $('#icml').change(function () {
-                populate("data.json")
-            })
-        })
-
         $(document).ready(populate())
     </script>
-
-    <div class="d-flex justify-content-center">
-        <div>
-            <h1>Highest cited ML conference paper</h1>
-        </div>
-    </div>
-
-    <div class="d-flex justify-content-center">
-        <div style="width: 100%; max-width: 900px;">
-            <p>This is a small little website that ranks machine learning papers
-                from the ICML, Neurips & ICLR conferences based on their citation
-                count. The citation counts are updated automatically at the beginning
-                of every week.
-            </p>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="icml" value="icml" checked="false">
-                <label class="form-check-label" for="inlineCheckbox1">ICML</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="neurips" value="Neurips" checked="true">
-                <label class="form-check-label" for="inlineCheckbox2">Neurips</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="iclr" disabled>
-                <label class="form-check-label" for="inlineCheckbox3">ICLR (disabled)</label>
-            </div>
-        </div>
-    </div>
-
-    <div id="table_div" class="d-flex justify-content-center">
-
-    </div>
-
-    <div id="footer" class="my-auto d-flex justify-content-center">
-        <a style="color: #DCDCDC" href="https://github.com/mdturp" target="_blank"> Created by MDT</a>
-    </div>
 
 </body>
 
