@@ -18,6 +18,7 @@ def load_data():
     df_icml = pd.DataFrame(data_dict_icml)
     df = pd.concat([df, df_icml])
     df = df.dropna(axis=1)
+    df = df.reset_index().drop("index", axis=1)
     return df
 
 def update(df):
