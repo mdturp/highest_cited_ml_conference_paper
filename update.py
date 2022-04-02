@@ -10,10 +10,10 @@ QUERY_DETAILS = '?fields=citationCount'
 
 
 def load_data():
-    with open('data.json', 'r') as f:
+    with open('data/neurips/data.json', 'r') as f:
         data_dict = json.load(f)
     df = pd.DataFrame(data_dict)
-    with open('icml_data.json', 'r') as f:
+    with open('data/icml/data.json', 'r') as f:
         data_dict_icml = json.load(f)
     df_icml = pd.DataFrame(data_dict_icml)
     df = pd.concat([df, df_icml])
@@ -49,11 +49,11 @@ def sort_and_save(df):
     df = df.sort_values(by=['citations'], ascending=False)
 
     df_icml = df[df["conference"]=="ICML"]
-    with open('icml_data.json', 'w') as f:
+    with open('data/icml/data.json', 'w') as f:
         json.dump(df_icml.to_dict(orient='records'), f)
     
     df_neurips = df[df["conference"]=="NeurIPS"]
-    with open('data.json', 'w') as f:
+    with open('data/neurips/data.json', 'w') as f:
         json.dump(df_neurips.to_dict(orient='records'), f)
 
 if __name__ == '__main__':

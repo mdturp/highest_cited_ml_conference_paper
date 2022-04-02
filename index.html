@@ -54,7 +54,7 @@
     </div>
 
     <script>
-        const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/"
+        const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/data/"
         const semantic_scholar_path = "https://www.semanticscholar.org/paper/"
 
         async function populate() {
@@ -63,12 +63,12 @@
             console.log($('#icmlCheckbox').is(":checked"))
             console.log($('#neuripsCheckbox').is(":checked"))
             if ($('#icmlCheckbox').is(":checked")) {
-                const icml_path = `${data_path}icml_data.json`
+                const icml_path = `${data_path}icml/data.json`
                 const icml_data = await fetch(icml_path).then(res => res.json());
                 data.push(...icml_data)
             }
             if ($('#neuripsCheckbox').is(":checked")) {
-                const neurips_path = `${data_path}data.json`
+                const neurips_path = `${data_path}neurips/data.json`
                 const neurips_data = await fetch(neurips_path).then(res => res.json());
                 data.push(...neurips_data)
             }
