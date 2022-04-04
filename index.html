@@ -39,8 +39,8 @@
                 <label class="form-check-label" for="neuripsCheckbox">Neurips</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="iclrCheckbox" value="iclr" disabled autocomplete="off">
-                <label class="form-check-label" for="iclrCheckbox">ICLR (coming soon)</label>
+                <input class="form-check-input" type="checkbox" id="iclrCheckbox" value="iclr" checked autocomplete="off">
+                <label class="form-check-label" for="iclrCheckbox">ICLR</label>
             </div>
         </div>
     </div>
@@ -63,19 +63,33 @@
             console.log($('#icmlCheckbox').is(":checked"))
             console.log($('#neuripsCheckbox').is(":checked"))
             if ($('#icmlCheckbox').is(":checked")) {
-                const icml_path = `${data_path}icml/data.json`
+                const icml_path = `${data_path}icml/all_data.json`
                 const icml_data = await fetch(icml_path).then(res => res.json());
                 data.push(...icml_data)
             }
             if ($('#neuripsCheckbox').is(":checked")) {
-                const neurips_path = `${data_path}neurips/data.json`
+                const neurips_path = `${data_path}neurips/all_data.json`
                 const neurips_data = await fetch(neurips_path).then(res => res.json());
                 data.push(...neurips_data)
             }
-
-            data = data.sort(function(a, b){return b.citations - a.citations})
+            if ($('#iclrCheckbox').is(":checked")) {
+                const iclr_path = `${data_path}iclr/all_data.json`
+                const iclr_data = await fetch(iclr_path).then(res => res.json());
+                data.push(...iclr_data)
+            }
+            data = data.map(function (x, index) {
+                if (x.citations === "-") {
+                    c = 0
+                } else {
+                    c = x.citations
+                }
+                x["citations_"] = c
+                return x
+            }) 
+            data = data.sort(function(a, b){return b.citations_ - a.citations_})
             data = data.map(function (x, index) {
                 x["rank"] = index + 1
+                delete x["citations_"]
                 return x
             }) 
 
@@ -116,6 +130,9 @@
                 populate()
             })
             $('#neuripsCheckbox').change(function () {
+                populate()
+            })
+            $('#iclrCheckbox').change(function () {
                 populate()
             })
         })
