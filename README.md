@@ -1,8 +1,8 @@
-# highest_cited_ml_conference_paper
-A github page that displays the highest machine learning conference paper.
+# Highest cited machine learning conference paper
+
+A github page that displays the highest machine learning conference paper according to semantic scholar.
+The citation account of paper batch is updated every 15 min. 
 
 
-ToDo:
 
-- [ ] Query ICLR paper from 2017 - Today
 
