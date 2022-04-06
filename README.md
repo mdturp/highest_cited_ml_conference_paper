@@ -1,7 +1,9 @@
 # Highest cited machine learning conference paper
 
-A github page that displays the highest machine learning conference paper according to semantic scholar.
-The citation account of paper batch is updated every 15 min. 
+This is a small little website that ranks machine learning papers
+from the ICML, Neurips & ICLR conferences based on their citation
+count. The citation counts are continuously updated.
+Citation counts are taken from Semantic Scholar.
 
 
 
