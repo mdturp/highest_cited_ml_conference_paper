@@ -110,14 +110,20 @@ def sort_and_save(df):
     df_icml = df[df["conference"] == "ICML"]
     with open('data/icml/all_data.json', 'w') as f:
         json.dump(df_icml.to_dict(orient='records'), f)
+    with open('data/icml/1000_data.json', 'w') as f:
+        json.dump(df_icml[:1000].to_dict(orient='records'), f)
 
     df_neurips = df[df["conference"] == "NeurIPS"]
     with open('data/neurips/all_data.json', 'w') as f:
         json.dump(df_neurips.to_dict(orient='records'), f)
+    with open('data/neurips/1000_data.json', 'w') as f:
+        json.dump(df_neurips[:1000].to_dict(orient='records'), f)
     
     df_iclr = df[df["conference"] == "ICLR"]
     with open('data/iclr/all_data.json', 'w') as f:
         json.dump(df_iclr.to_dict(orient='records'), f)
+    with open('data/iclr/1000_data.json', 'w') as f:
+        json.dump(df_iclr[:1000].to_dict(orient='records'), f)
 
 
 if __name__ == '__main__':
