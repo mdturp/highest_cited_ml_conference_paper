@@ -88,10 +88,10 @@ def update(df):
                 df.loc[idx, ["paperID", "citations", "last_updated"]] = \
                     [paper_id, updated_citation, toady_str]
         else:
-            response = query_semantic_scholar_for_paper_details(
+            response_details = query_semantic_scholar_for_paper_details(
                 paper_id=paper_id)
 
-            if response.status_code == 429 or response.status_code == 403:
+            if response_details.status_code == 429 or response_details.status_code == 403:
                 break
             updated_citation = response_details.json()["citationCount"]
             df.loc[idx, ["citations", "last_updated"]] = \
