@@ -93,7 +93,7 @@ def update(df):
 
             if response_details.status_code == 429 or response_details.status_code == 403:
                 break
-            updated_citation = response_details.json()["citationCount"]
+            updated_citation = response_details.json().get("citationCount", 0)
             df.loc[idx, ["citations", "last_updated"]] = \
                 [updated_citation, toady_str]
         
