@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
         integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="styles.css">
     <meta name="google-site-verification" content="fZAipmfSTrXaJerf5GR9XKP2BARcwDgXy7qgxTO_LSQ" />
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
@@ -14,6 +15,9 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 </head>
 
 <body>
@@ -30,17 +34,36 @@
                 count. The citation counts are continuously updated.
                 Citation counts are taken from Semantic Scholar.
             </p>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="icmlCheckbox" value="icml" checked autocomplete="off">
-                <label class="form-check-label" for="icmlCheckbox">ICML</label>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <div style="width: 100%; max-width: 900px;">
+
+            <div class="text-right">
+
+                <button type="button" class="btn btn-default" data-target="#collapseExample" data-toggle="collapse"
+                    aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-sliders-h"></i>
+                    <label>Select Filter</label>
+                </button>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="neuripsCheckbox" value="neurips" checked autocomplete="off">
-                <label class="form-check-label" for="neuripsCheckbox">Neurips</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="iclrCheckbox" value="iclr" checked autocomplete="off">
-                <label class="form-check-label" for="iclrCheckbox">ICLR</label>
+            <div class="collapse" id="collapseExample">
+                <div style="display:inline-block;margin-right:20px;">
+                    <label style="display: flex; font-weight: bold; flex-direction:column;" for="conferenceSelection">Conferences:</label>
+                    <select class="selectpicker" id="conferenceSelection" multiple autocomplete="off">
+                        <option value="iclr" selected>ICLR</option>
+                        <option value="neurips" selected>Neurips</option>
+                        <option value="icml" selected>ICML</option>
+                    </select>
+                </div>
+                <div style="display:inline-block;margin-right:20px;">
+                    <label  style="display: flex; font-weight: bold; flex-direction:column;" for="NrOfPapersSelection">Max nr of papers:</label>
+                    <select class="selectpicker" id="NrOfPapersSelection" autocomplete="off">
+                        <option value="1000" selected>Top 1000</option>
+                        <option value="all">All</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -60,22 +83,13 @@
         async function populate() {
 
             let data = []
-            console.log($('#icmlCheckbox').is(":checked"))
-            console.log($('#neuripsCheckbox').is(":checked"))
-            if ($('#icmlCheckbox').is(":checked")) {
-                const icml_path = `${data_path}icml/all_data.json`
-                const icml_data = await fetch(icml_path).then(res => res.json());
-                data.push(...icml_data)
-            }
-            if ($('#neuripsCheckbox').is(":checked")) {
-                const neurips_path = `${data_path}neurips/all_data.json`
-                const neurips_data = await fetch(neurips_path).then(res => res.json());
-                data.push(...neurips_data)
-            }
-            if ($('#iclrCheckbox').is(":checked")) {
-                const iclr_path = `${data_path}iclr/all_data.json`
-                const iclr_data = await fetch(iclr_path).then(res => res.json());
-                data.push(...iclr_data)
+            const NrOfPapers = $('#NrOfPapersSelection').val()
+            const conferences = $('#conferenceSelection').val()
+
+            for (const conference of conferences){
+                const path = `${data_path}${conference}/${NrOfPapers}_data.json`
+                const conference_data = await fetch(path).then(res => res.json());
+                data.push(...conference_data)
             }
             data = data.map(function (x, index) {
                 if (x.citations === "-") {
@@ -85,13 +99,13 @@
                 }
                 x["citations_"] = c
                 return x
-            }) 
-            data = data.sort(function(a, b){return b.citations_ - a.citations_})
+            })
+            data = data.sort(function (a, b) { return b.citations_ - a.citations_ })
             data = data.map(function (x, index) {
                 x["rank"] = index + 1
                 delete x["citations_"]
                 return x
-            }) 
+            })
 
             $('#table_div').html(
                 `<div style="width: 100%; max-width: 900px;">
@@ -126,13 +140,10 @@
         }
 
         $(document).ready(function () {
-            $('#icmlCheckbox').change(function () {
+            $('#NrOfPapersSelection').change(function () {
                 populate()
             })
-            $('#neuripsCheckbox').change(function () {
-                populate()
-            })
-            $('#iclrCheckbox').change(function () {
+            $('#conferenceSelection').change(function () {
                 populate()
             })
         })
