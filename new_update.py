@@ -93,7 +93,13 @@ def update(df):
 
             if response_details.status_code == 429 or response_details.status_code == 403:
                 break
-            updated_citation = response_details.json().get("citationCount", 0)
+            try:
+                updated_citation = response_details.json()["citationCount"]
+            except Exception as e:
+                print(f"A failure happend for `{paper_id}` ")
+                print(response_details.json())
+                raise e
+
             df.loc[idx, ["citations", "last_updated"]] = \
                 [updated_citation, toady_str]
         
