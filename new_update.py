@@ -8,6 +8,14 @@ import requests
 SEMANTIC_SCHOLAR_PATH = 'http://api.semanticscholar.org/graph/v1/paper/'
 QUERY_DETAILS = '?fields=citationCount'
 
+def load_failure_json():
+    with open('data/failure_cases.json', "r") as f:
+        failure_cases = json.load(f)
+    return failure_cases
+
+def save_failure_json(data):
+    with open('data/failure_cases.json', "w") as f:
+        json.dump(data, f)
 
 def load_data():
     with open('data/neurips/all_data.json', 'r') as f:
@@ -61,6 +69,7 @@ def update(df):
     df['datetime'] = pd.to_datetime(df['last_updated'], format='%d %b %Y')
     df['last_updated'] = [x.strftime('%d %b %Y') for x in df['datetime']]
     df = df.sort_values(by=["datetime"])
+    failure_cases = load_failure_json()
     toady_str = datetime.datetime.now().strftime('%d %b %Y')
     print("Updating")
     for idx, row in df.iterrows():
@@ -96,14 +105,21 @@ def update(df):
             try:
                 updated_citation = response_details.json()["citationCount"]
             except Exception as e:
-                print(f"A failure happend for `{paper_id}` ")
-                print(response_details.json())
-                raise e
+                entry = failure_cases.get(title, {"err_msg": [],
+                                                    "err_time": [],
+                                                    "paper_id": []})
+                entry["err_msg"].append(response_details.json())
+                entry["err_time"].append(toady_str)
+                entry["paper_id"].append(paper_id)
+
+                failure_cases["title"] = entry
+                
+                continue 
 
             df.loc[idx, ["citations", "last_updated"]] = \
                 [updated_citation, toady_str]
         
-
+    save_failure_json(failure_cases)
     df = df.drop('datetime', axis=1)
     return df
 
