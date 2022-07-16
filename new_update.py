@@ -112,7 +112,7 @@ def update(df):
                 entry["err_time"].append(toady_str)
                 entry["paper_id"].append(paper_id)
 
-                failure_cases["title"] = entry
+                failure_cases[title] = entry
                 
                 continue 
 
