@@ -31,8 +31,11 @@
         <div style="width: 100%; max-width: 900px;">
             <p>This is a small little website that ranks machine learning papers
                 from the ICML, Neurips & ICLR conferences based on their citation
-                count. The citation counts are continuously updated.
-                Citation counts are taken from Semantic Scholar.
+                count. The citation counts are continuously updated by periodically
+                querying Semantic Scholar using Github Actions. One of the main constraints
+                for this project was to keep costs as low as possible. After experimenting with
+                Microsoft Azure and AWS I realized that Github provides everything that is needed for a
+                project of this size free of charge. 
             </p>
         </div>
     </div>
@@ -73,9 +76,14 @@
     </div>
 
     <div id="footer" class="my-auto d-flex justify-content-center">
+        <p>In case you like the project and find it useful 
+           <a href="https://github.com/mdturp/highest_cited_ml_conference_paper" target="_blank">consider giving it star on Github ;)</a>
+        </p>
+        
+    </div>
+    <div id="footer2" class="my-auto d-flex justify-content-center">
         <a style="color: #DCDCDC" href="https://github.com/mdturp" target="_blank"> Created by MDT</a>
     </div>
-
     <script>
         const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/data/"
         const semantic_scholar_path = "https://www.semanticscholar.org/paper/"
