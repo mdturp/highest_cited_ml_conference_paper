@@ -74,16 +74,17 @@
     <div id="table_div" class="d-flex justify-content-center">
 
     </div>
-
-    <div id="footer" class="my-auto d-flex justify-content-center">
-        <p>In case you like the project and find it useful 
-           <a href="https://github.com/mdturp/highest_cited_ml_conference_paper" target="_blank">consider giving it star on Github ;)</a>
-        </p>
-        
-    </div>
-    <div id="footer2" class="my-auto d-flex justify-content-center">
-        <a style="color: #DCDCDC" href="https://github.com/mdturp" target="_blank"> Created by MDT</a>
-    </div>
+    <div id="footer" style="display: none;">
+        <div id="footer1" class="my-auto d-flex justify-content-center">
+            <p>In case you like the project and find it useful 
+            <a href="https://github.com/mdturp/highest_cited_ml_conference_paper" target="_blank">consider giving it star on Github ;)</a>
+            </p>
+            
+        </div>
+        <div id="footer2" class="my-auto d-flex justify-content-center">
+            <a style="color: #DCDCDC" href="https://github.com/mdturp" target="_blank"> Created by MDT</a>
+        </div>
+    </div>  
     <script>
         const data_path = "https://raw.githubusercontent.com/mdturp/highest_cited_ml_conference_paper/main/data/"
         const semantic_scholar_path = "https://www.semanticscholar.org/paper/"
@@ -140,6 +141,8 @@
                 searchAlign: "right",
                 pagination: true
             })
+            
+            $('#footer').css("display", "block");
         }
 
 
