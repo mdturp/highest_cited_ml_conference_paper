@@ -2,10 +2,11 @@
 
 This is a small little website that ranks machine learning papers
 from the ICML, Neurips & ICLR conferences based on their citation
-count. The citation counts are continuously updated.
+count. The citation counts are **continuously updated** using github actions.
 Citation counts are taken from Semantic Scholar.
 
-https://mdturp.github.io/highest_cited_ml_conference_paper/
+The code has been migrated to Vercel.
+https://ml-conference-paper.vercel.app/
 
 
 ## Issues
